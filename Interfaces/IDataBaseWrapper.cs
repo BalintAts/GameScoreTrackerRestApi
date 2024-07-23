@@ -1,6 +1,6 @@
 ﻿namespace Interfaces;
 
-public interface IDatabaseMethods
+public interface IDataBaseWrapper
 {
     public List<IScore> GetRecordScoresForPlayer(string name);
     public List<IScore> GetRecordScoresForGame(string title);

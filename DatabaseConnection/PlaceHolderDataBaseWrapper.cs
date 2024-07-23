@@ -1,21 +1,17 @@
 ﻿using Interfaces;
-using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore.Update;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DatabaseConnection
 {
-    public class DataBaseMethods : IDatabaseMethods
+    public class PlaceHolderDataBaseWrapper : IDataBaseWrapper
     {
         public IScore GetRecordScoreForPlayerForGame(string name, string title)
         {
-            throw new NotImplementedException();
+            return new Score();
         }
 
         public List<IScore> GetRecordScoresForGame(string title)

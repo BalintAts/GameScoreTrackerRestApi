@@ -8,9 +8,9 @@ using Interfaces;
 /// <param name="Database"></param>
 public class GameScoreManager/*(IMyDatabase _database)*/
 {
-    private readonly IDatabaseMethods _database;
+    private readonly IDataBaseWrapper _database;
 
-    public GameScoreManager(IDatabaseMethods myDatabase)
+    public GameScoreManager(IDataBaseWrapper myDatabase)
     {
         _database = myDatabase;
     }

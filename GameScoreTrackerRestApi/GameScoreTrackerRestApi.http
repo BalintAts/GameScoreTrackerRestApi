@@ -1,13 +1,5 @@
 @GameScoreTrackerRestApi_HostAddress = http://localhost:5098
 
-GET {{GameScoreTrackerRestApi_HostAddress}}/tracker
-
-###
-
-GET {{GameScoreTrackerRestApi_HostAddress}}/GameScoreTracker/gamescores?title=alma
-
-###
-
 GET {{GameScoreTrackerRestApi_HostAddress}}/GameScoreTracker/gamescores/alma
 
 ###
@@ -27,10 +19,6 @@ GET {{GameScoreTrackerRestApi_HostAddress}}/GameScoreTracker/playergamescores?ti
 GET {{GameScoreTrackerRestApi_HostAddress}}/GameScoreTracker/players
 ###
 
-GET {{GameScoreTrackerRestApi_HostAddress}}/GameScoreTracker/games
-###
-
-GET {{GameScoreTrackerRestApi_HostAddress}}/weatherforecast/
 
 Accept: application/json
 

@@ -1,41 +1,49 @@
 using DatabaseConnection;
 using GameScoreTrackerRestApi;
 using Interfaces;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
+const bool useDataBase = true;
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
-builder.Services.AddScoped<IDatabaseMethods, DataBaseMethods>(); 
 builder.Services.AddScoped<GameScoreManager, GameScoreManager>();
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<GameScoreDatabaseContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//for prod, using environment variable:
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+//                               ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
 
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (useDataBase)
 {
-    //app.UseSwagger();
-    //app.UseSwaggerUI();
+    builder.Services.AddScoped<IDataBaseWrapper, DataBaseWrapper>();
+    builder.Services.AddDbContext<GameScoreDatabaseContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+}
+else
+{
+    builder.Services.AddScoped<IDataBaseWrapper, PlaceHolderDataBaseWrapper>();
 }
 
+
+    var app = builder.Build();
+
+//To migrate on startup:
+//using (var scope = app.Services.CreateScope())
+//{
+//    var dbContext = scope.ServiceProvider.GetRequiredService<GameScoreDatabaseContext>();
+//    dbContext.Database.Migrate();
+//}
+
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
-app.MapControllers();   //UsouRouting, UseEndpoints
-
+app.MapControllers();   //UseRouting, UseEndpoints
 
 
+//Convention based routing:
 //app.MapControllerRoute(
 //    name: "default",
 //    pattern: "{controller=GameScoreTracker}/{action=Games}/{id}");  
@@ -45,3 +53,6 @@ app.MapControllers();   //UsouRouting, UseEndpoints
 //    routeTemplate: "api/{controller}/{id}");
 
 app.Run();
+
+
+

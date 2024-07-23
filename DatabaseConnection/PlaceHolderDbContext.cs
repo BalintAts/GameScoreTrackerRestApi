@@ -4,19 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace DatabaseConnection
 {
-    public class GameScoreDatabaseContext : DbContext
+    internal class PlaceHolderDbContext : DbContext
     {
-        public GameScoreDatabaseContext(DbContextOptions<GameScoreDatabaseContext> options)
-            : base(options)
+        public PlaceHolderDbContext()
         {
         }
 
         public DbSet<Game> Games { get; set; }
-        public DbSet<Player> Players { get; set; }  
+        public DbSet<Player> Players { get; set; }
         public DbSet<Score> Scores { get; set; }
     }
 }
