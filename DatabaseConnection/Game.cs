@@ -1,6 +1,6 @@
 ﻿namespace DatabaseConnection;
 
-public class Game
+public class Game : IGame
 {
     public int Id { get; set; }
     public string Title { get; set; }

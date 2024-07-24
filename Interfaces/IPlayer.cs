@@ -2,7 +2,8 @@
 
 public interface IPlayer
 {
-    string Name { get; }
-    DateTime BirthDate { get; }
+    public int Id { get; set; }
+    public string PlayerName { get; set; }
+    public DateTime Birthdate { get; set; }
 }
 

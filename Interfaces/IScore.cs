@@ -2,8 +2,7 @@
 
 public interface IScore
 {
-    IGame Game { get; }
-    IPlayer Player { get; }
-    int ScoreValue { get; }
+    public int Id { get; set; }
+    public int ScoreValue { get; set; }
 }
 

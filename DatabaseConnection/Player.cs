@@ -1,6 +1,8 @@
-﻿namespace DatabaseConnection;
+﻿using Interfaces;
 
-public class Player
+namespace DatabaseConnection;
+
+public class Player : IPlayer
 {
     public int Id { get; set; }
     public string PlayerName { get; set; }
