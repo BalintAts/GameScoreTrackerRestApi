@@ -1,54 +1,100 @@
-﻿namespace GameScoreTrackerRestApi;
+﻿using DatabaseConnection;
+using GameScoreTrackerRestApi.ViewModels;
 
-using Interfaces;
+namespace GameScoreTrackerRestApi;
+
 
 /// <summary>
-/// This class converts customt types to builtin types
+/// This class converts customt types/entities to builtin types
 /// </summary>
 /// <param name="Database"></param>
-public class GameScoreManager/*(IMyDatabase _database)*/
+public class GameScoreManager
 {
-    private readonly IDataBaseWrapper _database;
+    private readonly Repository _repsoritory;
 
-    public GameScoreManager(IDataBaseWrapper myDatabase)
+    public GameScoreManager(Repository repo)
     {
-        _database = myDatabase;
+        _repsoritory = repo;
     }
 
-    public List<Dictionary<string, string>> GetRecordScoresForGame(string title) =>
-        ConvertScores(_database.GetRecordScoresForGame(title));
-
-    public List<Dictionary<string, string>> GetRecordScoresForPlayer(string name) =>
-        ConvertScores(_database.GetRecordScoresForPlayer(name));
-
-    public Dictionary<string, string> GetRecordScoreForGameForPlayer(string title, string name)
+    public List<string> GetGameTitles()
     {
-        var score = _database.GetRecordScoreForPlayerForGame(title, name);
+        var games = _repsoritory.GetGames();
+        return games.Select(x => x.Title).ToList();
+    }
+
+    public List<string> GetPlayerNames()
+    {
+        var players = _repsoritory.GetPlayers();
+        return players.Select(x => x.Name).ToList();
+    }
+
+    public List<ScoreVM> GetScoresForGame(string Title)
+    {
+        var scores = _repsoritory.GetScoresForGame(Title).ToList();
+
+        return scores.Select(
+            x => new ScoreVM
+            {
+                PlayerName = x.Player.Name,
+                GammeTitle = x.Game.Title,
+                Score = x.ScoreValue
+            }
+        ).ToList();
+    }
+
+    public List<ScoreVM> GetScoresForPlayer(string Name)
+    {
+        var scores = _repsoritory.GetScoresForPlayer(Name).ToList();
+
+        return scores.Select(
+            x => new ScoreVM
+                {
+                    PlayerName = x.Player.Name,
+                    GammeTitle = x.Game.Title,
+                    Score = x.ScoreValue
+                }
+            ).ToList();
+    }
+
+    public ScoreVM GetScoreForPlayerAndGame(string name, string title)
+    {
+        var score = _repsoritory.GetScoreForPlayerAndGame(name, title);
         if (score == null)
         {
-            throw new Exception($"No score for game {title} for player {name}");
+            return null;
         }
 
-        return new Dictionary<string, string> {
-            { "Player:" , score.Player.Name },
-            { "Game:" , score.Game.Title },
-            { "Score:" , score.ScoreValue.ToString() }
+        return new ScoreVM
+        {
+            PlayerName = score.Player.Name,
+            GammeTitle = score.Game.Title,
+            Score = score.ScoreValue
         };
     }
 
-    private List<Dictionary<string, string>> ConvertScores(List<IScore> scores)
+    public void AddPlayer(PlayerVM player)
     {
-        var simpleScores = new List<Dictionary<string, string>>();
-        foreach (IScore score in scores)
-        {
-            var element = new Dictionary<string, string>
-            {
-                { "Player:" , score.Player.Name },
-                { "Game:" , score.Game.Title },
-                { "Score:" , score.ScoreValue.ToString() }
-            };
-            simpleScores.Add(element);
-        }
-        return simpleScores;
+        var playerEntity = new Player { Name = player.Name, Birthdate = DateTime.Today };
+        _repsoritory.AddPlayer(playerEntity);
+    }
+
+    public void AddGame(GameVM game)
+    {
+        var gameEntity = new Game { Title = game.Title , Genre = game.Genre };
+        _repsoritory.AddGame(gameEntity);
+    }
+
+    public void AddScore(ScoreVM score)
+    {
+        var player = _repsoritory.GetPlayerForName(score.PlayerName);
+        var game = _repsoritory.GetGameForTitle(score.GammeTitle);
+        var scoreEntity = new Score { Player = player, Game = game };
+        _repsoritory.AddScore(scoreEntity);
+    }
+
+    public void ChangeGenre(string title, string genre)
+    {
+        _repsoritory.ChangeGenre(title, genre);
     }
 }

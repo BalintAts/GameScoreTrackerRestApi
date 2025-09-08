@@ -4,6 +4,34 @@ GET {{GameScoreTrackerRestApi_HostAddress}}/GameScoreTracker/gamescores/alma
 
 ###
 
+
+GET {{GameScoreTrackerRestApi_HostAddress}}/GameScoreTracker/games
+
+###
+
+GET {{GameScoreTrackerRestApi_HostAddress}}/GameScoreTracker/players
+
+###
+
+GET {{GameScoreTrackerRestApi_HostAddress}}/GameScoreTracker/gamescores?title=doom
+
+###
+
+GET {{GameScoreTrackerRestApi_HostAddress}}/GameScoreTracker/gamescores/doom
+
+###
+
+
+GET {{GameScoreTrackerRestApi_HostAddress}}/GameScoreTracker/playergamescores?player=Alice&title=doom
+
+###
+
+
+
+
+
+
+
 GET {{GameScoreTrackerRestApi_HostAddress}}/GameScoreTracker/rank/doom/5
 
 ###
@@ -20,7 +48,7 @@ GET {{GameScoreTrackerRestApi_HostAddress}}/GameScoreTracker/players
 ###
 
 
-Accept: application/json
+# Accept: application/json
 
 
 ###
