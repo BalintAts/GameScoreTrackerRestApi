@@ -52,7 +52,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddDbContext<GameScoreDatabaseContext>();
 
 
-var key = Encoding.UTF8.GetBytes("secret secret secret secret secret secret secret secret");
+var key = Encoding.UTF8.GetBytes("secret");
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

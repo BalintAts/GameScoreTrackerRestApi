@@ -21,10 +21,10 @@ public class GameScoreDatabaseContext : DbContext
     public GameScoreDatabaseContext(DbContextOptions options) : base(options) { }
 
 
-    protected override void OnConfiguring(DbContextOptionsBuilder options)
-    { 
-        options.UseNpgsql("Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=Rgx---312");//hiányzott a port
-    }
+    //protected override void OnConfiguring(DbContextOptionsBuilder options)
+    //{ 
+    //    options.UseNpgsql("Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=Rgx---312");//hiányzott a port
+    //}
 
     public DbSet<Game> Games { get; set; }
     public DbSet<Player> Players { get; set; }  
