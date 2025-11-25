@@ -5,11 +5,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
+
+//todo: logger, exceptionhandler, problems-details
+
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = builder.Configuration.GetConnectionString("MssqlConnection");
 builder.Services.AddDbContext<GameScoreDatabaseContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(connectionString, sql => sql.MigrationsAssembly("MssqlConnection"));
 });
 
 builder.Services.AddScoped<Repository>();

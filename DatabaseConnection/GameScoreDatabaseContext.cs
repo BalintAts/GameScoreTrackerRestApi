@@ -1,13 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using Npgsql;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace DatabaseConnection;
 
