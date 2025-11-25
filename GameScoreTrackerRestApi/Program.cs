@@ -1,17 +1,21 @@
 using DatabaseConnection;
 using GameScoreTrackerRestApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-const bool useDataBase = true;
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<GameScoreManager, GameScoreManager>();
+builder.Services.AddDbContext<GameScoreDatabaseContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+builder.Services.AddScoped<Repository>();
+
+builder.Services.AddScoped<GameScoreManager>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -46,11 +50,7 @@ builder.Services.AddSwaggerGen(options =>
             new string[] {}
         }
     });
-
-
 });
-builder.Services.AddDbContext<GameScoreDatabaseContext>();
-
 
 var key = Encoding.UTF8.GetBytes("secret");
 builder.Services.AddAuthentication(options =>
@@ -71,39 +71,16 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "GameScoreTracker v1");
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-
-
-//To migrate on startup:
-//using (var scope = app.Services.CreateScope())
-//{
-//    var dbContext = scope.ServiceProvider.GetRequiredService<GameScoreDatabaseContext>();
-//    dbContext.Database.Migrate();
-//}
-
-//using (var scope = app.Services.CreateScope())
-//{
-//    var context = scope.ServiceProvider.GetRequiredService<GameScoreDatabaseContext>();
-//    //DbSeeder.Seed(context);
-//}
-
 app.UseHttpsRedirection();
 app.UseAuthorization();
-app.MapControllers();   //UseRouting, UseEndpoints
-
-
-//Convention based routing:
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller=GameScoreTracker}/{action=Games}/{id}");  
-
-
-//app.MapControllerRoute(name: "API Default",
-//    routeTemplate: "api/{controller}/{id}");
-
+app.MapControllers();
 app.Run();
-
-
-
