@@ -5,7 +5,7 @@ namespace GameScoreTrackerRestApi;
 
 
 /// <summary>
-/// This class converts customt types/entities to builtin types
+/// This class converts custom types/entities to builtin types
 /// </summary>
 /// <param name="Database"></param>
 public class GameScoreManager
@@ -17,21 +17,21 @@ public class GameScoreManager
         _repository = repo;
     }
 
-    public List<string> GetGameTitles()
+    public async Task<List<string>> GetGameTitles(CancellationToken ct)
     {
-        var games = _repository.GetGames();
+        var games = await _repository.GetGames(ct);
         return games.Select(x => x.Title).ToList();
     }
 
-    public List<string> GetPlayerNames()
+    public async Task<List<string>> GetPlayerNames(CancellationToken ct)
     {
-        var players = _repository.GetPlayers();
+        var players = await _repository.GetPlayers(ct);
         return players.Select(x => x.Name).ToList();
     }
 
-    public List<ScoreVM> GetScoresForGame(string Title)
+    public async Task<List<ScoreVM>> GetScoresForGame(string Title, CancellationToken ct)
     {
-        var scores = _repository.GetScoresForGame(Title).ToList();
+        var scores = await _repository.GetScoresForGame(Title, ct);
 
         return scores.Select(
             x => new ScoreVM
@@ -43,9 +43,9 @@ public class GameScoreManager
         ).ToList();
     }
 
-    public List<ScoreVM> GetScoresForPlayer(string Name)
+    public async Task<List<ScoreVM>> GetScoresForPlayer(string Name, CancellationToken ct)
     {
-        var scores = _repository.GetScoresForPlayer(Name).ToList();
+        var scores = await _repository.GetScoresForPlayer(Name, ct);
 
         return scores.Select(
             x => new ScoreVM
@@ -57,9 +57,9 @@ public class GameScoreManager
             ).ToList();
     }
 
-    public ScoreVM GetScoreForPlayerAndGame(string name, string title)
+    public async Task<ScoreVM> GetScoreForPlayerAndGame(string name, string title, CancellationToken ct)
     {
-        var score = _repository.GetScoreForPlayerAndGame(name, title);
+        var score = await _repository.GetScoreForPlayerAndGame(name, title, ct);
         if (score == null)
         {
             return null;
@@ -73,28 +73,28 @@ public class GameScoreManager
         };
     }
 
-    public void AddPlayer(PlayerVM player)
+    public async Task AddPlayer(PlayerVM player, CancellationToken ct)
     {
         var playerEntity = new Player { Name = player.Name, Birthdate = DateTime.Today };
-        _repository.AddPlayer(playerEntity);
+        await _repository.AddPlayer(playerEntity, ct);
     }
 
-    public void AddGame(GameVM game)
+    public async Task AddGame(GameVM game, CancellationToken ct)
     {
         var gameEntity = new Game { Title = game.Title , Genre = game.Genre };
-        _repository.AddGame(gameEntity);
+        await _repository.AddGame(gameEntity, ct);
     }
 
-    public void AddScore(ScoreVM score)
+    public async Task AddScore(ScoreVM score, CancellationToken ct)
     {
-        var player = _repository.GetPlayerForName(score.PlayerName);
-        var game = _repository.GetGameForTitle(score.GammeTitle);
+        var player = await _repository.GetPlayerForName(score.PlayerName, ct);
+        var game = await _repository.GetGameForTitle(score.GammeTitle, ct);
         var scoreEntity = new Score { Player = player, Game = game };
-        _repository.AddScore(scoreEntity);
+        await _repository.AddScore(scoreEntity, ct);
     }
 
-    public void ChangeGenre(string title, string genre)
+    public async Task ChangeGenre(string title, string genre, CancellationToken ct)
     {
-        _repository.ChangeGenre(title, genre);
+        await _repository.ChangeGenre(title, genre, ct);
     }
 }

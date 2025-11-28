@@ -13,78 +13,106 @@ public class GameScoreTrackerController : Controller
 {
     private readonly GameScoreManager _gameScoreManager;
 
+    //todo: null handling in the following way:
+    //var score = _gameScoreManager.GetScoreForPlayerAndGame(player, title);
+    //    return score == null ? NotFound() : Ok(score);
+
+    // todo: handle cancelling
+
     public GameScoreTrackerController(GameScoreManager gsc)
     {
         _gameScoreManager = gsc;
     }
 
     [HttpGet("games")]
-    [Authorize]
-    public IActionResult Games()
+    [ProducesResponseType<ScoreVM>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Games(CancellationToken ct)
     {
-        return Ok(_gameScoreManager.GetGameTitles());
+        return Ok(await _gameScoreManager.GetGameTitles(ct));
     }
 
     [HttpGet("players")]
-    public IActionResult Players()
+    [ProducesResponseType<ScoreVM>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Players(CancellationToken ct)
     {
-        return Ok(_gameScoreManager.GetPlayerNames());
+        return Ok(await _gameScoreManager.GetPlayerNames(ct));
     }
 
     [HttpGet("gamescores")]
-    public IActionResult GetScoresForGame([FromQuery] string title)
+    [ProducesResponseType<ScoreVM>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetScoresForGame([FromQuery] string title, CancellationToken ct)
     {
-        return Ok(_gameScoreManager.GetScoresForGame(title));
+        return Ok(await _gameScoreManager.GetScoresForGame(title, ct));
     }
 
     [HttpGet("gamescores/{title}")]
-    public IActionResult GetRecordScoresForGame(string title)
+    [ProducesResponseType<ScoreVM>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetRecordScoresForGame(string title, CancellationToken ct)
     {
-        return Ok(_gameScoreManager.GetScoresForGame(title));
+        return Ok(await _gameScoreManager.GetScoresForGame(title, ct));
     }
 
     [HttpGet("playerscores")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult GetRecordScoresForPlayer([FromQuery] /*[FromHeader]*/ string player)
+    [ProducesResponseType<ScoreVM>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetRecordScoresForPlayer([FromQuery] /*[FromHeader]*/ string player, CancellationToken ct)
     {
-        return Ok(_gameScoreManager.GetScoresForPlayer(player));
+        return Ok(await _gameScoreManager.GetScoresForPlayer(player, ct));
     }
 
     [HttpGet("playergamescores")]
     [ProducesResponseType<ScoreVM>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult GetRecordScoreForGameForPlayer([FromQuery] string title, [FromQuery] string player)
+    public async Task<IActionResult> GetRecordScoreForGameForPlayer([FromQuery] string title, [FromQuery] string player, CancellationToken ct)
     {
-        var score = _gameScoreManager.GetScoreForPlayerAndGame(player, title);
-        return score == null ? NotFound() : Ok(score);
+        return Ok(await _gameScoreManager.GetScoreForPlayerAndGame(player, title, ct));
     }
 
     [HttpPost("player")]
     [Consumes(MediaTypeNames.Application.Json)]
-    public IActionResult AddPlayer([FromBody] PlayerVM player)
+    [Authorize]
+    [ProducesResponseType<ScoreVM>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> AddPlayer([FromBody] PlayerVM player, CancellationToken ct)
     {
-        _gameScoreManager.AddPlayer(player);
+        await _gameScoreManager.AddPlayer(player, ct); 
         return Ok(player);
     }
 
     [HttpPost("game")]
-    public IActionResult AddGame([FromBody] GameVM game)
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Authorize]
+    [ProducesResponseType<ScoreVM>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async  Task<IActionResult> AddGame([FromBody] GameVM game, CancellationToken ct)
     {
-        _gameScoreManager.AddGame(game);
+        await _gameScoreManager.AddGame(game, ct);
         return Ok(game);
     }
 
     [HttpPost("score")]
-    public IActionResult AddScore([FromBody] ScoreVM score)
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Authorize]
+    [ProducesResponseType<ScoreVM>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> AddScore([FromBody] ScoreVM score, CancellationToken ct)
     {
-        _gameScoreManager.AddScore(score);
+        await _gameScoreManager.AddScore(score, ct);
         return Ok(score);
     }
 
     [HttpPut("changeGenre/{gameTitle}")]
-    public IActionResult ChangeGenre(string gameTitle, [FromBody] string genre)
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Authorize]
+    [ProducesResponseType<ScoreVM>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult>  ChangeGenre(string gameTitle, [FromBody] string genre, CancellationToken ct)
     {
-        _gameScoreManager.ChangeGenre(gameTitle, genre);
+        await _gameScoreManager.ChangeGenre(gameTitle, genre, ct);
         return Ok();
     }
 }

@@ -21,7 +21,7 @@ public class AuthController : Controller
             return Content("Wrong username or password");
         }
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("secret secret secret secret secret secret secret secret"));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("secret secret secret secret secret secret secret"));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
@@ -37,7 +37,6 @@ public class AuthController : Controller
             expires: DateTime.UtcNow.AddMinutes(5),
             signingCredentials: creds); 
 
-        //return Ok(token);
         return Ok( new 
         { 
             token = new JwtSecurityTokenHandler().WriteToken(token) 

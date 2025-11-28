@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using static System.Formats.Asn1.AsnWriter;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace DatabaseConnection;
 
@@ -18,80 +11,64 @@ public class Repository
         _dataContext = dataContext;
     }
 
-    public List<Game> GetGames() => _dataContext.Games.ToList();
+    public async Task<List<Game>> GetGames(CancellationToken ct) => await _dataContext.Games.ToListAsync(ct);
 
-    public List<Player> GetPlayers() => _dataContext.Players.ToList();
+    public async Task<List<Player>> GetPlayers(CancellationToken ct) => await _dataContext.Players.ToListAsync(ct);
 
-    public Player GetPlayerForName(string name)
+    public async Task<Player> GetPlayerForName(string name, CancellationToken ct)
     {
-        return _dataContext.Players.FirstOrDefault(p => p.Name.ToLower() == name.ToLower());   // ?? NullEntity with fields
+        return await _dataContext.Players.FirstOrDefaultAsync(p => p.Name.ToLower().Equals(name.ToLower()), ct);   // ?? NullEntity with fields
     }
 
-    public Game GetGameForTitle(string title)
+    public async Task<Game> GetGameForTitle(string title, CancellationToken ct)
     {
-        return _dataContext.Games.FirstOrDefault(g => g.Title.ToLower() == title.ToLower());
+        return await _dataContext.Games.FirstOrDefaultAsync(g => g.Title.ToLower().Equals( title.ToLower()), ct);
     }
 
-    public List<Score> GetScoresForPlayer(string name)
+    public async Task<List<Score>> GetScoresForPlayer(string name, CancellationToken ct)
     {
-        return _dataContext.Scores.Include(s => s.Player).Include(s => s.Game).Where(s => s.Player.Name.ToLower() == name.ToLower()).ToList();
+        return await _dataContext.Scores.Include(s => s.Player).Include(s => s.Game).Where(s => s.Player.Name.ToLower().Equals(name.ToLower())).ToListAsync(ct);
     }
 
-    public List<Score> GetScoresForGame(string title)
+    public async Task<List<Score>> GetScoresForGame(string title, CancellationToken ct)
     {
-        return _dataContext.Scores.Include(s => s.Game).Include(s => s.Player).Where(s => s.Game.Title.ToLower() == title.ToLower()).ToList();
+        return await _dataContext.Scores.Include(s => s.Game).Include(s => s.Player).Where(s => s.Game.Title.ToLower().Equals(title.ToLower())).ToListAsync(ct);
     }
 
-    public Score GetScoreForPlayerAndGame(string name, string title)
+    public async Task<Score> GetScoreForPlayerAndGame(string name, string title,CancellationToken ct)
     {
-        //return _dataContext.Scores.Include(s => s.Player)
-        //    .Include(s => s.Game)
-        //    .FirstOrDefault(s => s.Player.Name == name && s.Game.Title
-        // == title);
-        //var joined = _dataContext.Scores.Include(s => s.Player)
-        //    .Include(s => s.Game).ToList();
-
-        //.Where(s => s.Player.Name == name).ToList();
-        //var result = subResult.FirstOrDefault(s => s.Game.Title.ToLower() == title.ToLower())
-        //var a = joined.Where(s => s.Player.Name.ToLower() == name.ToLower()).ToList();
-        //var b = a.Where(s => s.Game.Title.ToLower() == title.ToLower()).ToList();
-        //return b[0];
-
-
-        var result = _dataContext.Scores.Include(s => s.Player)
+        return await _dataContext.Scores.Include(s => s.Player)
             .Include(s => s.Game)
-            .FirstOrDefault(s => s.Player.Name.ToLower() == name.ToLower() && s.Game.Title.ToLower()
-         == title.ToLower());
-        return result;
+            .FirstOrDefaultAsync(s => s.Player.Name.ToLower().Equals (name.ToLower()) && s.Game.Title.ToLower()
+         .Equals (title.ToLower()), ct);
     }
 
-    public void AddPlayer(Player player)
+    public async Task AddPlayer(Player player, CancellationToken ct)
     {
         _dataContext.Players.Add(player);
-        _dataContext.SaveChanges();
+        await _dataContext.SaveChangesAsync(ct);
     }
 
-    public void AddGame(Game game)
+    public async Task AddGame(Game game, CancellationToken ct)
     {
         _dataContext.Games.Add(game);
-        _dataContext.SaveChanges();
+        await _dataContext.SaveChangesAsync(ct);
     }
 
-    public void AddScore(Score score)
+    public async Task AddScore(Score score, CancellationToken ct)
     {
         _dataContext.Scores.Add(score);
-
-        _dataContext.SaveChanges();
+        await _dataContext.SaveChangesAsync(ct);
     }
 
-    public void ChangeGenre(string title, string genre)
+    public async Task ChangeGenre(string title, string genre, CancellationToken ct)
     {
-        var game = GetGameForTitle(title);
+        var game = await GetGameForTitle(title, ct);
         if (game != null)
         {
             game.Genre = genre;
         }
-        _dataContext.SaveChanges();
+        await _dataContext.SaveChangesAsync();
 
     }
 }

@@ -55,7 +55,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-var key = Encoding.UTF8.GetBytes("secret");
+var key = Encoding.UTF8.GetBytes("secret secret secret secret secret secret secret");
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
