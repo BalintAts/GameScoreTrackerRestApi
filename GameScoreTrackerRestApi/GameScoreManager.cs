@@ -10,28 +10,28 @@ namespace GameScoreTrackerRestApi;
 /// <param name="Database"></param>
 public class GameScoreManager
 {
-    private readonly Repository _repsoritory;
+    private readonly Repository _repository;
 
     public GameScoreManager(Repository repo)
     {
-        _repsoritory = repo;
+        _repository = repo;
     }
 
     public List<string> GetGameTitles()
     {
-        var games = _repsoritory.GetGames();
+        var games = _repository.GetGames();
         return games.Select(x => x.Title).ToList();
     }
 
     public List<string> GetPlayerNames()
     {
-        var players = _repsoritory.GetPlayers();
+        var players = _repository.GetPlayers();
         return players.Select(x => x.Name).ToList();
     }
 
     public List<ScoreVM> GetScoresForGame(string Title)
     {
-        var scores = _repsoritory.GetScoresForGame(Title).ToList();
+        var scores = _repository.GetScoresForGame(Title).ToList();
 
         return scores.Select(
             x => new ScoreVM
@@ -45,7 +45,7 @@ public class GameScoreManager
 
     public List<ScoreVM> GetScoresForPlayer(string Name)
     {
-        var scores = _repsoritory.GetScoresForPlayer(Name).ToList();
+        var scores = _repository.GetScoresForPlayer(Name).ToList();
 
         return scores.Select(
             x => new ScoreVM
@@ -59,7 +59,7 @@ public class GameScoreManager
 
     public ScoreVM GetScoreForPlayerAndGame(string name, string title)
     {
-        var score = _repsoritory.GetScoreForPlayerAndGame(name, title);
+        var score = _repository.GetScoreForPlayerAndGame(name, title);
         if (score == null)
         {
             return null;
@@ -76,25 +76,25 @@ public class GameScoreManager
     public void AddPlayer(PlayerVM player)
     {
         var playerEntity = new Player { Name = player.Name, Birthdate = DateTime.Today };
-        _repsoritory.AddPlayer(playerEntity);
+        _repository.AddPlayer(playerEntity);
     }
 
     public void AddGame(GameVM game)
     {
         var gameEntity = new Game { Title = game.Title , Genre = game.Genre };
-        _repsoritory.AddGame(gameEntity);
+        _repository.AddGame(gameEntity);
     }
 
     public void AddScore(ScoreVM score)
     {
-        var player = _repsoritory.GetPlayerForName(score.PlayerName);
-        var game = _repsoritory.GetGameForTitle(score.GammeTitle);
+        var player = _repository.GetPlayerForName(score.PlayerName);
+        var game = _repository.GetGameForTitle(score.GammeTitle);
         var scoreEntity = new Score { Player = player, Game = game };
-        _repsoritory.AddScore(scoreEntity);
+        _repository.AddScore(scoreEntity);
     }
 
     public void ChangeGenre(string title, string genre)
     {
-        _repsoritory.ChangeGenre(title, genre);
+        _repository.ChangeGenre(title, genre);
     }
 }

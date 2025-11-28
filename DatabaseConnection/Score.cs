@@ -1,7 +1,7 @@
 ﻿
 namespace DatabaseConnection;
 
-public class Score /*: Score*/
+public class Score
 {
     public int Id { get; set; }
     public int PlayerId { get; set; }
